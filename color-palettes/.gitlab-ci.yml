@@ -1,0 +1,45 @@
+# Use the same image than Radium Engine
+image: "stormirit/radium_dev:v0.x"
+
+stages:
+  - build
+  - test
+  - deploy
+
+cache:
+  paths:
+    - eigen3
+    - build
+
+before_script:
+  - export ROOT_DIR=`pwd`
+  - apt-get update && apt-get install -y --no-install-recommends doxygen graphviz
+  - "[[ -d eigen3 ]] || git clone --branch 3.3.7 https://github.com/eigenteam/eigen-git-mirror.git eigen3"
+  - "[[ -d public ]] || mkdir public"
+  - "[[ -d build ]] || mkdir build"
+  - cd build
+
+build:
+  stage: build
+  script:
+    - rm -rf *
+    - cmake -DCMAKE_BUILD_TYPE=Release -DEIGEN3_INCLUDE_DIR="$ROOT_DIR/eigen3" ../cmake
+    - make -j $(nproc)
+
+test:
+  stage: test
+  script:
+    # The cache will restore the built binaries
+    - make test
+
+# see doc at https://gitlab.com/help/user/project/pages/introduction.md
+pages:
+  stage: deploy
+  script:
+    - make doc
+    - mv html ../public
+  artifacts:
+    paths:
+      - public
+  only: # Only generate doc on main repo's master branch
+    - master

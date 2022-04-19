@@ -1,0 +1,97 @@
+strict digraph archi {
+  rankdir=LR;
+  node [shape=box];
+
+  u_t_color_funcs [label="ColorCostFunctors"];
+  u_t_hatching_funcs [label="HatchingCostFunctors"];
+  u_t_color [label="Color"];
+  u_t_hatching [label="Hatching"];
+  u_t_color_serial [label="ColorSerialization"];
+  u_t_hatching_serial [label="HatchingSerialization"];
+  u_t_etc [label="..."];
+
+  fe_functors [label="CostFunctors"];
+  fe_ps [label="ParameterSpace"];
+  fe_pss [label="ParameterSpaceValues"];
+  fe_cps [label="ConstrainedParameterSpace"];
+  fe_icps [label="InterpolableConstrainedParameterSpace"];
+  fe_sole [label="SolverExploration"];
+  fe_soli [label="SolverInterpolation"];
+  fe_serial [label="Serializer"];
+  fe_serial_yaml [label="SerializeYAML"];
+  fe_serial_bin [label="SerializeBinary"];
+
+  be_soleeigen [label="SolverExploration"];
+  be_solieigen [label="SolverInterpolation"];
+  be_soleetc [label="SolverExploration"];
+  be_solietc [label="SolverInterpolation"];
+
+  subgraph cluster_user {
+    label="User";
+    {
+      rank=same;
+      u_t_color_funcs;
+      u_t_hatching_funcs;
+      u_t_color;
+      u_t_hatching;
+      u_t_color_serial;
+      u_t_hatching_serial;
+      u_t_etc;
+    }
+  }
+
+  subgraph cluster_front_end {
+    rank=min;
+    label="Front-end";
+    {
+      rank=same;
+      fe_functors;
+    }
+    {
+      rank=same;
+      fe_ps;
+      fe_pss;
+    }
+    {
+      rank=same;
+      fe_cps;
+      fe_icps;
+    }
+    {
+      rank=same;
+      fe_sole;
+      fe_soli;
+    }
+    { u_t_color, u_t_hatching } -> fe_ps;
+    { u_t_color_funcs, u_t_hatching_funcs } -> fe_functors;
+    { u_t_color_serial, u_t_hatching_serial } -> fe_serial [constraint=false];
+    fe_cps -> fe_functors [label="Uses",constraint=false];
+    fe_ps -> fe_cps [label="Work on",dir=back];
+    fe_pss -> fe_ps [label="Of type",constraint=false]
+    fe_cps -> fe_sole [label="Work on",dir=back];
+    fe_cps -> fe_icps [label="Uses two",dir=back,constraint=false];
+    fe_icps -> fe_soli [label="Work on",dir=back];
+    fe_serial -> fe_serial_yaml [dir=back];
+    fe_serial -> fe_serial_bin [dir=back];
+  }
+  subgraph cluster_back_end_eigen {
+    label="Back-end Eigen";
+    {
+      rank=same;
+      be_soleeigen;
+      be_solieigen;
+    }
+    fe_sole -> be_soleeigen [dir=back];
+    fe_soli -> be_solieigen [dir=back];
+  }
+  subgraph cluster_back_end_etc {
+    label="Back-end ...";
+    {
+      rank=same;
+      be_soleetc;
+      be_solietc;
+    }
+    fe_sole -> be_soleetc [dir=back];
+    fe_soli -> be_solietc [dir=back];
+  }
+}
