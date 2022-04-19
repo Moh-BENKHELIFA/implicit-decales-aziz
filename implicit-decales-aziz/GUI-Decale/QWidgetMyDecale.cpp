@@ -109,6 +109,8 @@ int QWidgetMyDecale::getDecalID(QPointF mousepos)
                 break;
             }else{
                  //std::cout<<"outside decal: "<<std::endl;
+                indexSelectedDecale = -1;
+
             }
         }else {
             indexSelectedDecale = -1;
@@ -431,16 +433,16 @@ void QWidgetMyDecale::mouseDoubleClickEvent(QMouseEvent *event){ //Zoom on the d
 //    decales[0]->scale(2, 2);
 //    //decales[0]->rotate(M_PI/10.);
 
-            std::cout<<decales.size()<<std::endl;
+//            std::cout<<decales.size()<<std::endl;
 
-            decales.pop_back();
-            decaleImages.pop_back();
+//            decales.pop_back();
+//            decaleImages.pop_back();
 
-            needUpdate = true;
-    //        //setGamutColor(Color("red"));
-            std::cout<<"----------------------"<<std::endl;
-    //        for(int i=1; i<decales.size(); i++){
-            std::cout<<decales.size()<<std::endl;
+//            needUpdate = true;
+//    //        //setGamutColor(Color("red"));
+//            std::cout<<"----------------------"<<std::endl;
+//    //        for(int i=1; i<decales.size(); i++){
+//            std::cout<<decales.size()<<std::endl;
     //        }
 
           //  return true;
